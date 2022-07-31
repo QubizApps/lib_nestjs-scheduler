@@ -1,5 +1,6 @@
 import typescript from '@rollup/plugin-typescript';
 import path from 'path';
+import externals from 'rollup-plugin-node-externals';
 import del from 'rollup-plugin-delete';
 import dts from 'rollup-plugin-dts';
 
@@ -17,11 +18,12 @@ export default [
         declaration: true,
         declarationDir: 'dts'
       }),
+      externals({ include: ['cron', 'rxjs'] }),
     ],
     output: [
       { file: pkg.main, format: 'cjs', sourcemap: true },
+      { file: pkg.module, format: 'esm', sourcemap: true },
     ],
-    external: [/@qubizapps\/.*/, /@nestjs\/.*/, /node:.*/, 'lodash'],
   },
   // bundle all type definitions into one file
   {
