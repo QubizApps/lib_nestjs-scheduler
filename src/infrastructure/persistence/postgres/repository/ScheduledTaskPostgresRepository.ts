@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 
 import { ScheduledTask } from '../../../../core/domain/model/ScheduledTask';
 import { ScheduledTaskRepository } from '../../../../core/domain/repository/ScheduledTaskRepository';
+import { SchedulerModuleOptions } from '../../../../SchedulerModuleOptions';
 import { ScheduledTaskPostgresDao } from '../dao/ScheduledTaskPostgresDao';
 import { ScheduledTaskPostgresMapper } from '../mapper/index';
 
@@ -15,7 +16,10 @@ export class ScheduledTaskPostgresRepository implements ScheduledTaskRepository 
     private readonly eventPub: EventPublisher,
     @InjectRepository(ScheduledTaskPostgresDao)
     private readonly repo: Repository<ScheduledTaskPostgresDao>,
-  ) {}
+    private readonly moduleOptions: SchedulerModuleOptions,
+  ) {
+    repo.metadata.schema = this.moduleOptions.storage.postgres.schema;
+  }
 
   async get(id: Uuid): Promise<ScheduledTask | undefined> {
     return this.repo

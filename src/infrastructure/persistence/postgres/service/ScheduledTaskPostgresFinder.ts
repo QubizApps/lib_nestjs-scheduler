@@ -8,6 +8,7 @@ import {
   ScheduledTaskFinder,
 } from '../../../../core/read/service/ScheduledTaskFinder';
 import { FinderResult } from '../../../../core/read/service/types';
+import { SchedulerModuleOptions } from '../../../../SchedulerModuleOptions';
 import { ScheduledTaskPostgresDao } from '../dao/ScheduledTaskPostgresDao';
 import { ScheduledTaskPostgresMapper } from '../mapper/index';
 
@@ -16,7 +17,10 @@ export class ScheduledTaskPostgresFinder implements ScheduledTaskFinder {
   constructor(
     @InjectRepository(ScheduledTaskPostgresDao)
     private readonly repo: Repository<ScheduledTaskPostgresDao>,
-  ) {}
+    private readonly moduleOptions: SchedulerModuleOptions,
+  ) {
+    repo.metadata.schema = this.moduleOptions.storage.postgres.schema;
+  }
 
   async findAll(filters: ScheduledTaskFilters): Promise<FinderResult<ScheduledTaskDto[]>> {
     const qb = this.repo.createQueryBuilder('task');

@@ -81,12 +81,7 @@ export class SchedulerModule implements OnModuleInit {
     }
 
     if (options.storage.type === 'postgres') {
-      imports.push(
-        TypeOrmModule.forFeature([ScheduledTaskPostgresDao], {
-          type: 'postgres',
-          schema: options.storage.postgres.schema,
-        }),
-      );
+      imports.push(TypeOrmModule.forFeature([ScheduledTaskPostgresDao]));
       providers = providers.concat([
         {
           provide: ScheduledTaskRepository,
