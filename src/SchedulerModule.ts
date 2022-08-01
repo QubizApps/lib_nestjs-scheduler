@@ -105,6 +105,7 @@ export class SchedulerModule implements OnModuleInit {
       global: true,
       imports,
       providers,
+      exports: [SchedulerModuleOptions],
     };
   }
 
