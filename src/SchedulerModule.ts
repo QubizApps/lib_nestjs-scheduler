@@ -2,7 +2,7 @@ import { DynamicModule, Logger, Module, OnModuleInit, Provider, Type } from '@ne
 import { ModuleRef, ModulesContainer, RouterModule } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { Module as NestModule } from '@nestjs/core/injector/module';
-import { CqrsModule, EventPublisher } from '@nestjs/cqrs';
+import { CqrsModule } from '@nestjs/cqrs';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -12,7 +12,6 @@ import { commandHandlers } from './core/application/command/index';
 import { queryHandlers } from './core/application/query/index';
 import { sagas } from './core/application/saga/index';
 import { ScheduledTaskRepository } from './core/domain/repository/ScheduledTaskRepository';
-import { ScheduledTask } from './core/index';
 import { ScheduledTaskFinder } from './core/read/service/ScheduledTaskFinder';
 import { IScheduledTaskHandler } from './core/service/IScheduledTaskHandler';
 import { ScheduledTaskExecutor } from './core/service/ScheduledTaskExecutor';
@@ -110,10 +109,6 @@ export class SchedulerModule implements OnModuleInit {
   }
 
   async onModuleInit() {
-    // register domain aggregates as event publishers
-    const eventPub = this.moduleRef.get(EventPublisher);
-    eventPub.mergeClassContext(ScheduledTask);
-
     const taskHandlers = this.loadTaskHandlers();
 
     // register decorated classes as task handlers(by type)
