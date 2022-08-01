@@ -3,6 +3,7 @@ import { ModuleRef, ModulesContainer, RouterModule } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { Module as NestModule } from '@nestjs/core/injector/module';
 import { CqrsModule, EventPublisher } from '@nestjs/cqrs';
+import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApiModule } from './api/ApiModule';
@@ -57,7 +58,7 @@ export class SchedulerModule implements OnModuleInit {
       throw new Error('Mongo storage is not supported yet');
     }
 
-    const imports = [CqrsModule, SchedulerModule.forRoot()];
+    const imports = [CqrsModule, ScheduleModule.forRoot()];
     let providers: Provider[] = [
       {
         provide: SchedulerModuleOptions,
