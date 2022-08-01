@@ -1,4 +1,4 @@
-import { DynamicModule, Module, OnModuleInit, Provider, Type } from '@nestjs/common';
+import { DynamicModule, Logger, Module, OnModuleInit, Provider, Type } from '@nestjs/common';
 import { ModuleRef, ModulesContainer, RouterModule } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { Module as NestModule } from '@nestjs/core/injector/module';
@@ -60,6 +60,7 @@ export class SchedulerModule implements OnModuleInit {
 
     const imports = [CqrsModule, ScheduleModule.forRoot()];
     let providers: Provider[] = [
+      Logger,
       {
         provide: SchedulerModuleOptions,
         useValue: options,

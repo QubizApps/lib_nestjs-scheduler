@@ -1,4 +1,4 @@
-import { DynamicModule, Module } from '@nestjs/common';
+import { DynamicModule, Logger, Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 
 import { SchedulerController } from './controller/SchedulerController';
@@ -10,6 +10,7 @@ export class ApiModule {
       module: ApiModule,
       imports: [CqrsModule],
       controllers: [SchedulerController],
+      providers: [Logger],
     };
   }
 }
