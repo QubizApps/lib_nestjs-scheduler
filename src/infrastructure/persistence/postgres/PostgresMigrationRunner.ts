@@ -2,10 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions.js';
 
-import {
-  DefaultSchedulerModuleOptions,
-  SchedulerModuleOptions,
-} from '../../../SchedulerModuleOptions';
+import { SchedulerModuleOptions } from '../../../SchedulerModuleOptions';
 import { MigrationRunner } from '../MigrationRunner';
 import { migrations } from './migrations/index';
 
@@ -34,7 +31,6 @@ export class PostgresMigrationRunner implements MigrationRunner {
     await this.connection.initialize();
 
     this.logger.log(`Running scheduler module migrations`, 'SchedulerModule');
-    this.logger.log(DefaultSchedulerModuleOptions, 'SchedulerModule');
     await this.connection.runMigrations({
       transaction: 'all',
     });
