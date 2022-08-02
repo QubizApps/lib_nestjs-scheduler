@@ -25,8 +25,7 @@ export class PostgresMigrationRunner implements MigrationRunner {
     this.connection = new DataSource({
       ...options,
       migrations: [...migrations],
-      migrationsTableName: 'scheduler_migrations',
-      schema: this.moduleOptions.storage.postgres.schema,
+      migrationsTableName: this.moduleOptions.storage.postgres.migrationTable,
     });
 
     await this.connection.initialize();

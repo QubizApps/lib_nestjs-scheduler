@@ -86,7 +86,12 @@ export class Init1659455968864 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('scheduled_task', true, true, true);
+    await queryRunner.dropTable(
+      `${DefaultSchedulerModuleOptions.storage.postgres.schema}.scheduled_task`,
+      true,
+      true,
+      true,
+    );
     // we don't drop the schema, because we might no own it
     // this should not break migrations because schema is created only if not exists
     // it might require manual cleanup if you want to revert everything

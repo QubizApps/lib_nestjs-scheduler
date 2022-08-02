@@ -16,6 +16,7 @@ export interface SchedulerModuleOptions {
     type: 'postgres' | 'mongo';
     postgres: {
       schema: string;
+      migrationTable: string;
     };
   };
 }
@@ -35,6 +36,7 @@ export const DefaultSchedulerModuleOptions: SchedulerModuleOptions = {
     type: 'postgres',
     postgres: {
       schema: 'public',
+      migrationTable: 'scheduler_migrations',
     },
   },
 };

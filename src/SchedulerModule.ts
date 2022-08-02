@@ -22,7 +22,6 @@ import { ScheduledTaskPostgresDao } from './infrastructure/persistence/postgres/
 import { PostgresMigrationRunner } from './infrastructure/persistence/postgres/PostgresMigrationRunner';
 import { ScheduledTaskPostgresRepository } from './infrastructure/persistence/postgres/repository/ScheduledTaskPostgresRepository';
 import { ScheduledTaskPostgresFinder } from './infrastructure/persistence/postgres/service/ScheduledTaskPostgresFinder';
-import { NestJsSchedulerService } from './infrastructure/service/NestJsSchedulerService';
 import { DefaultSchedulerModuleOptions, SchedulerModuleOptions } from './SchedulerModuleOptions';
 import { DeepPartial } from './types';
 
@@ -40,17 +39,24 @@ export class SchedulerModule implements OnModuleInit {
   ): DynamicModule {
     const options: SchedulerModuleOptions = {
       api: {
-        enabled: _options?.api?.enabled ?? true,
-        prefix: _options?.api?.prefix ?? '',
+        enabled: _options?.api?.enabled ?? DefaultSchedulerModuleOptions.api.enabled,
+        prefix: _options?.api?.prefix ?? DefaultSchedulerModuleOptions.api.prefix,
       },
       scheduler: {
-        implementation: _options?.scheduler?.implementation ?? NestJsSchedulerService,
-        types: _options?.scheduler?.types ?? [],
+        implementation:
+          _options?.scheduler?.implementation ??
+          DefaultSchedulerModuleOptions.scheduler.implementation,
+        types: _options?.scheduler?.types ?? DefaultSchedulerModuleOptions.scheduler.types,
       },
       storage: {
-        type: _options?.storage?.type ?? 'postgres',
+        type: _options?.storage?.type ?? DefaultSchedulerModuleOptions.storage.type,
         postgres: {
-          schema: _options?.storage?.postgres?.schema ?? 'public',
+          schema:
+            _options?.storage?.postgres?.schema ??
+            DefaultSchedulerModuleOptions.storage.postgres.schema,
+          migrationTable:
+            _options?.storage?.postgres?.migrationTable ??
+            DefaultSchedulerModuleOptions.storage.postgres.migrationTable,
         },
       },
     };
@@ -109,7 +115,12 @@ export class SchedulerModule implements OnModuleInit {
       global: true,
       imports,
       providers,
-      exports: [SchedulerModuleOptions],
+      exports: [
+        SchedulerModuleOptions,
+        ScheduledTaskRepository,
+        ScheduledTaskFinder,
+        SchedulerService,
+      ],
     };
   }
 
