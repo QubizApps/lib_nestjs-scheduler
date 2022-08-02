@@ -1,9 +1,13 @@
+import { Logger } from '@nestjs/common';
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
 import { DefaultSchedulerModuleOptions } from '../../../../SchedulerModuleOptions';
 
 export class Init1659455968864 implements MigrationInterface {
+  private logger = new Logger('PostgresMigrationRunner');
+
   public async up(queryRunner: QueryRunner): Promise<void> {
+    this.logger.log(`Creating schema ${DefaultSchedulerModuleOptions.storage.postgres.schema}`);
     await queryRunner.createSchema(DefaultSchedulerModuleOptions.storage.postgres.schema, true);
 
     await queryRunner.createTable(
