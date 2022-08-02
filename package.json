@@ -1,6 +1,6 @@
 {
   "name": "@qubizapps/nestjs-scheduler",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "NestJS scheduler module",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
