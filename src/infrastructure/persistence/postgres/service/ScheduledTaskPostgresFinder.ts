@@ -18,9 +18,7 @@ export class ScheduledTaskPostgresFinder implements ScheduledTaskFinder {
     @InjectRepository(ScheduledTaskPostgresDao)
     private readonly repo: Repository<ScheduledTaskPostgresDao>,
     private readonly moduleOptions: SchedulerModuleOptions,
-  ) {
-    repo.metadata.schema = this.moduleOptions.storage.postgres.schema;
-  }
+  ) {}
 
   async findAll(filters: ScheduledTaskFilters): Promise<FinderResult<ScheduledTaskDto[]>> {
     const qb = this.repo.createQueryBuilder('task');

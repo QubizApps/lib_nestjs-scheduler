@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ofType, Saga } from '@nestjs/cqrs';
-import { Uuid } from '@qubizapps/nestjs-commons';
 import { catchError, concatMap, filter, map, merge, Observable } from 'rxjs';
 
 import {
@@ -36,9 +35,7 @@ export class ScheduledTaskSaga {
             ScheduledTask | undefined,
           ]
         >
-      >((event) =>
-        this.repo.get(Uuid.fromString(event.payload.taskId)).then((task) => [event, task]),
-      ),
+      >((event) => this.repo.get(event.payload.aggregateId).then((task) => [event, task])),
       filter(([, task]) => !!task),
       map(([event, task]) => {
         task = task as ScheduledTask;
@@ -66,7 +63,7 @@ export class ScheduledTaskSaga {
   removeTask = ($events: Observable<any>): Observable<any> =>
     $events.pipe(ofType(ScheduledTaskRemoved)).pipe(
       map((event) => {
-        this.scheduler.remove(Uuid.fromString(event.payload.taskId));
+        this.scheduler.remove(event.payload.aggregateId);
       }),
       catchError((err) => {
         this.logger.error(err.message || err, err.stack?.toString(), this.constructor.name);

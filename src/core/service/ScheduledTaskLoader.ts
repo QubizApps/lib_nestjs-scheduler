@@ -16,7 +16,7 @@ export class ScheduledTaskLoader {
 
     for (const task of tasks) {
       this.scheduler.add(task);
-      this.logger.log(`Loaded scheduled task "${task.name}"`, this.constructor.name);
+      this.logger.log(`Loaded scheduled task "${task.name}"`, 'SchedulerModule');
     }
   }
 

@@ -1,6 +1,8 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 
-@Entity({ name: 'scheduled_task' })
+import { DefaultSchedulerModuleOptions } from '../../../../SchedulerModuleOptions';
+
+@Entity({ name: 'scheduled_task', schema: DefaultSchedulerModuleOptions.storage.postgres.schema })
 export class ScheduledTaskPostgresDao {
   @PrimaryColumn({ name: 'id', type: 'uuid' })
   id!: string;

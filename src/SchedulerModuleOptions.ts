@@ -1,6 +1,7 @@
 import { Type } from '@nestjs/common';
 
 import { SchedulerService } from './core/service/SchedulerService';
+import { NestJsSchedulerService } from './infrastructure/service/NestJsSchedulerService';
 
 export interface SchedulerModuleOptions {
   scheduler: {
@@ -20,3 +21,20 @@ export interface SchedulerModuleOptions {
 }
 
 export class SchedulerModuleOptions {}
+
+export const DefaultSchedulerModuleOptions: SchedulerModuleOptions = {
+  scheduler: {
+    types: [],
+    implementation: NestJsSchedulerService,
+  },
+  api: {
+    enabled: true,
+    prefix: '',
+  },
+  storage: {
+    type: 'postgres',
+    postgres: {
+      schema: 'public',
+    },
+  },
+};

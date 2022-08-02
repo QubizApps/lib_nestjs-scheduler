@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ofType, Saga } from '@nestjs/cqrs';
-import { Uuid } from '@qubizapps/nestjs-commons';
 import { catchError, concatMap, Observable } from 'rxjs';
 
 import { ScheduledTaskRun } from '../../domain/event/events';
@@ -14,7 +13,7 @@ export class ScheduledTaskExecutionSaga {
   runTask = ($events: Observable<any>): Observable<any> =>
     $events.pipe(
       ofType(ScheduledTaskRun),
-      concatMap((event) => this.executor.execute(Uuid.fromString(event.payload.taskId))),
+      concatMap((event) => this.executor.execute(event.payload.aggregateId)),
       catchError((err) => {
         this.logger.error(err.message || err, err.stack?.toString(), this.constructor.name);
         return [];

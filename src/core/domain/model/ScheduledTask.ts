@@ -3,6 +3,7 @@ import { AggregateRoot, AggregateRootState, Uuid } from '@qubizapps/nestjs-commo
 import {
   ScheduledTaskCompleted,
   ScheduledTaskCreated,
+  ScheduledTaskFailed,
   ScheduledTaskRemoved,
   ScheduledTaskRun,
   ScheduledTaskStarted,
@@ -45,11 +46,10 @@ export class ScheduledTask extends AggregateRoot<Uuid, ScheduledTaskState> {
 
     instance.apply(
       new ScheduledTaskCreated(instance, {
-        taskId: data.id.toString(),
-        name: data.name,
+        type: data.type,
+        taskType: instance.taskType,
         interval: data.interval,
         params: data.params,
-        type: data.type,
       }),
     );
 
@@ -63,13 +63,27 @@ export class ScheduledTask extends AggregateRoot<Uuid, ScheduledTaskState> {
   start(): void {
     this._state.status = ScheduledTaskStatus.Started;
 
-    this.apply(new ScheduledTaskStarted(this, { taskId: this.id.toString() }));
+    this.apply(
+      new ScheduledTaskStarted(this, {
+        type: this._state.type,
+        taskType: this.taskType,
+        interval: this._state.interval,
+        params: this._state.params,
+      }),
+    );
   }
 
   stop(): void {
     this._state.status = ScheduledTaskStatus.Stopped;
 
-    this.apply(new ScheduledTaskStopped(this, { taskId: this.id.toString() }));
+    this.apply(
+      new ScheduledTaskStopped(this, {
+        type: this._state.type,
+        taskType: this.taskType,
+        interval: this._state.interval,
+        params: this._state.params,
+      }),
+    );
   }
 
   run(): void {
@@ -78,9 +92,9 @@ export class ScheduledTask extends AggregateRoot<Uuid, ScheduledTaskState> {
 
     this.apply(
       new ScheduledTaskRun(this, {
-        taskId: this.id.toString(),
-        name: this._state.name,
         type: this._state.type,
+        taskType: this.taskType,
+        interval: this._state.interval,
         params: this._state.params,
       }),
     );
@@ -89,16 +103,38 @@ export class ScheduledTask extends AggregateRoot<Uuid, ScheduledTaskState> {
   complete(): void {
     this._state.completedAt = new Date();
 
-    this.apply(new ScheduledTaskCompleted(this, { taskId: this.id.toString() }));
+    this.apply(
+      new ScheduledTaskCompleted(this, {
+        type: this._state.type,
+        taskType: this.taskType,
+        interval: this._state.interval,
+        params: this._state.params,
+        output: this._state.output,
+      }),
+    );
+  }
+
+  failed(): void {
+    this._state.completedAt = new Date();
+
+    this.apply(
+      new ScheduledTaskFailed(this, {
+        type: this._state.type,
+        taskType: this.taskType,
+        interval: this._state.interval,
+        params: this._state.params,
+        error: this._state.error,
+      }),
+    );
   }
 
   remove(): void {
     this.apply(
       new ScheduledTaskRemoved(this, {
-        taskId: this.id.toString(),
-        name: this._state.name,
         type: this._state.type,
         taskType: this.taskType,
+        interval: this._state.interval,
+        params: this._state.params,
       }),
     );
   }

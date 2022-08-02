@@ -11,6 +11,6 @@ export type ScheduledTaskHandle = {
   stop: () => void;
 };
 
-export interface IScheduledTaskHandler {
-  run(task: ScheduledTaskHandle): Promise<void>;
+export interface IScheduledTaskHandler<T = any> {
+  run(task: ScheduledTaskHandle): Promise<T>;
 }

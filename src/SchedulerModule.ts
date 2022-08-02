@@ -17,11 +17,13 @@ import { IScheduledTaskHandler } from './core/service/IScheduledTaskHandler';
 import { ScheduledTaskExecutor } from './core/service/ScheduledTaskExecutor';
 import { ScheduledTaskLoader } from './core/service/ScheduledTaskLoader';
 import { SchedulerService } from './core/service/SchedulerService';
+import { MigrationRunner } from './infrastructure/persistence/MigrationRunner';
 import { ScheduledTaskPostgresDao } from './infrastructure/persistence/postgres/dao/ScheduledTaskPostgresDao';
+import { PostgresMigrationRunner } from './infrastructure/persistence/postgres/PostgresMigrationRunner';
 import { ScheduledTaskPostgresRepository } from './infrastructure/persistence/postgres/repository/ScheduledTaskPostgresRepository';
 import { ScheduledTaskPostgresFinder } from './infrastructure/persistence/postgres/service/ScheduledTaskPostgresFinder';
 import { NestJsSchedulerService } from './infrastructure/service/NestJsSchedulerService';
-import { SchedulerModuleOptions } from './SchedulerModuleOptions';
+import { DefaultSchedulerModuleOptions, SchedulerModuleOptions } from './SchedulerModuleOptions';
 import { DeepPartial } from './types';
 
 @Module({})
@@ -52,6 +54,10 @@ export class SchedulerModule implements OnModuleInit {
         },
       },
     };
+
+    DefaultSchedulerModuleOptions.api = options.api;
+    DefaultSchedulerModuleOptions.scheduler = options.scheduler;
+    DefaultSchedulerModuleOptions.storage = options.storage;
 
     if (options.storage.type === 'mongo') {
       throw new Error('Mongo storage is not supported yet');
@@ -91,6 +97,10 @@ export class SchedulerModule implements OnModuleInit {
           provide: ScheduledTaskFinder,
           useClass: ScheduledTaskPostgresFinder,
         },
+        {
+          provide: MigrationRunner,
+          useClass: PostgresMigrationRunner,
+        },
       ]);
     }
 
@@ -104,6 +114,9 @@ export class SchedulerModule implements OnModuleInit {
   }
 
   async onModuleInit() {
+    const migrationRunner = this.moduleRef.get(MigrationRunner);
+    await migrationRunner.run();
+
     const taskHandlers = this.loadTaskHandlers();
 
     // register decorated classes as task handlers(by type)
