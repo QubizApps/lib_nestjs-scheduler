@@ -8,14 +8,16 @@ import { migrations } from './migrations/index';
 
 @Injectable()
 export class PostgresMigrationRunner implements MigrationRunner {
-  private readonly connection: DataSource;
+  private connection!: DataSource;
 
   constructor(
-    datasource: DataSource,
+    private readonly datasource: DataSource,
     private readonly moduleOptions: SchedulerModuleOptions,
     private readonly logger: Logger,
-  ) {
-    const options = datasource.options as PostgresConnectionOptions;
+  ) {}
+
+  async run(): Promise<void> {
+    const options = this.datasource.options as PostgresConnectionOptions;
 
     // clone the original default db connection
     // and setup only local migration classes to be run through it
@@ -24,14 +26,14 @@ export class PostgresMigrationRunner implements MigrationRunner {
       ...options,
       migrations: [...migrations],
       migrationsTableName: 'scheduler_migrations',
-      schema: moduleOptions.storage.postgres.schema,
+      schema: this.moduleOptions.storage.postgres.schema,
     });
-  }
 
-  async run(): Promise<void> {
     this.logger.log(`Running scheduler module migrations`, 'SchedulerModule');
     await this.connection.runMigrations({
       transaction: 'all',
     });
+
+    await this.connection.destroy();
   }
 }
