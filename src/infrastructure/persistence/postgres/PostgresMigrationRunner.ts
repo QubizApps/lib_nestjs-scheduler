@@ -29,6 +29,8 @@ export class PostgresMigrationRunner implements MigrationRunner {
       schema: this.moduleOptions.storage.postgres.schema,
     });
 
+    await this.connection.initialize();
+
     this.logger.log(`Running scheduler module migrations`, 'SchedulerModule');
     await this.connection.runMigrations({
       transaction: 'all',
