@@ -43,7 +43,7 @@ export class ScheduledTaskExecutor {
       this.logger.error(`Task handler for ${task.type} not found`, this.constructor.name);
 
       task.error = `Task handler for ${task.type} not found`;
-      task.complete();
+      task.failed();
     } else {
       try {
         const output = await handler.run({
@@ -56,10 +56,10 @@ export class ScheduledTaskExecutor {
         });
 
         task.output = output;
+        task.complete();
       } catch (e: any) {
         task.error = e;
-      } finally {
-        task.complete();
+        task.failed();
       }
     }
 
