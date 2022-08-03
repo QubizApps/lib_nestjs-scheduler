@@ -18,7 +18,7 @@ import { ScheduledTaskExecutor } from './core/service/ScheduledTaskExecutor';
 import { ScheduledTaskLoader } from './core/service/ScheduledTaskLoader';
 import { SchedulerService } from './core/service/SchedulerService';
 import { MigrationRunner } from './infrastructure/persistence/MigrationRunner';
-import { ScheduledTaskPostgresDao } from './infrastructure/persistence/postgres/dao/ScheduledTaskPostgresDao';
+import { ScheduledTaskPostgresEntitySchema } from './infrastructure/persistence/postgres/dao/ScheduledTaskPostgresDao';
 import { PostgresMigrationRunner } from './infrastructure/persistence/postgres/PostgresMigrationRunner';
 import { ScheduledTaskPostgresRepository } from './infrastructure/persistence/postgres/repository/ScheduledTaskPostgresRepository';
 import { ScheduledTaskPostgresFinder } from './infrastructure/persistence/postgres/service/ScheduledTaskPostgresFinder';
@@ -84,7 +84,11 @@ export class SchedulerModule implements OnModuleInit {
     }
 
     if (options.storage.type === 'postgres') {
-      imports.push(TypeOrmModule.forFeature([ScheduledTaskPostgresDao]));
+      imports.push(
+        TypeOrmModule.forFeature([
+          ScheduledTaskPostgresEntitySchema(options.storage.postgres.schema),
+        ]),
+      );
       providers = providers.concat([
         {
           provide: ScheduledTaskRepository,
