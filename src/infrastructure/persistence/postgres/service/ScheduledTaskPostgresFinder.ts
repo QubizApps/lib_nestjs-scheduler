@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import { ScheduledTaskDto } from '../../../../core/read/dto/ScheduledTaskDto';
 import {
@@ -8,15 +7,25 @@ import {
   ScheduledTaskFinder,
 } from '../../../../core/read/service/ScheduledTaskFinder';
 import { FinderResult } from '../../../../core/read/service/types';
-import { ScheduledTaskPostgresDao } from '../dao/ScheduledTaskPostgresDao';
+import { SchedulerModuleOptions } from '../../../../SchedulerModuleOptions';
+import {
+  ScheduledTaskPostgresDao,
+  ScheduledTaskPostgresEntitySchema,
+} from '../dao/ScheduledTaskPostgresDao';
 import { ScheduledTaskPostgresMapper } from '../mapper/index';
 
 @Injectable()
 export class ScheduledTaskPostgresFinder implements ScheduledTaskFinder {
+  private repo: Repository<ScheduledTaskPostgresDao>;
+
   constructor(
-    @InjectRepository(ScheduledTaskPostgresDao)
-    private readonly repo: Repository<ScheduledTaskPostgresDao>,
-  ) {}
+    private readonly connection: DataSource,
+    private readonly moduleOptions: SchedulerModuleOptions,
+  ) {
+    this.repo = this.connection.getRepository<ScheduledTaskPostgresDao>(
+      ScheduledTaskPostgresEntitySchema(this.moduleOptions.storage.postgres.schema),
+    );
+  }
 
   async findAll(filters: ScheduledTaskFilters): Promise<FinderResult<ScheduledTaskDto[]>> {
     const qb = this.repo.createQueryBuilder('task');

@@ -30,10 +30,15 @@ export class PostgresMigrationRunner implements MigrationRunner {
 
     await this.connection.initialize();
 
-    this.logger.log(`Running scheduler module migrations`, 'SchedulerModule');
-    await this.connection.runMigrations({
-      transaction: 'all',
-    });
+    await this.connection
+      .createQueryRunner()
+      .createSchema(this.moduleOptions.storage.postgres.schema, true);
+
+    await this.connection.query(
+      `SET search_path TO ${this.moduleOptions.storage.postgres.schema},public,postgis;`,
+    );
+
+    await this.connection.runMigrations();
 
     await this.connection.destroy();
   }

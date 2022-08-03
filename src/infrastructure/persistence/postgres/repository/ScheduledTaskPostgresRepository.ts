@@ -1,21 +1,30 @@
 import { Injectable } from '@nestjs/common';
 import { EventPublisher } from '@nestjs/cqrs';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Uuid } from '@qubizapps/nestjs-commons';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import { ScheduledTask } from '../../../../core/domain/model/ScheduledTask';
 import { ScheduledTaskRepository } from '../../../../core/domain/repository/ScheduledTaskRepository';
-import { ScheduledTaskPostgresDao } from '../dao/ScheduledTaskPostgresDao';
+import { SchedulerModuleOptions } from '../../../../SchedulerModuleOptions';
+import {
+  ScheduledTaskPostgresDao,
+  ScheduledTaskPostgresEntitySchema,
+} from '../dao/ScheduledTaskPostgresDao';
 import { ScheduledTaskPostgresMapper } from '../mapper/index';
 
 @Injectable()
 export class ScheduledTaskPostgresRepository implements ScheduledTaskRepository {
+  private repo: Repository<ScheduledTaskPostgresDao>;
+
   constructor(
     private readonly eventPub: EventPublisher,
-    @InjectRepository(ScheduledTaskPostgresDao)
-    private readonly repo: Repository<ScheduledTaskPostgresDao>,
-  ) {}
+    private readonly connection: DataSource,
+    private readonly moduleOptions: SchedulerModuleOptions,
+  ) {
+    this.repo = this.connection.getRepository<ScheduledTaskPostgresDao>(
+      ScheduledTaskPostgresEntitySchema(this.moduleOptions.storage.postgres.schema),
+    );
+  }
 
   async get(id: Uuid): Promise<ScheduledTask | undefined> {
     return this.repo
