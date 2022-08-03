@@ -22,7 +22,7 @@ import { ScheduledTaskPostgresDao } from './infrastructure/persistence/postgres/
 import { PostgresMigrationRunner } from './infrastructure/persistence/postgres/PostgresMigrationRunner';
 import { ScheduledTaskPostgresRepository } from './infrastructure/persistence/postgres/repository/ScheduledTaskPostgresRepository';
 import { ScheduledTaskPostgresFinder } from './infrastructure/persistence/postgres/service/ScheduledTaskPostgresFinder';
-import { DefaultSchedulerModuleOptions, SchedulerModuleOptions } from './SchedulerModuleOptions';
+import { GlobalSchedulerModuleOptions, SchedulerModuleOptions } from './SchedulerModuleOptions';
 import { DeepPartial } from './types';
 
 @Module({})
@@ -39,31 +39,31 @@ export class SchedulerModule implements OnModuleInit {
   ): DynamicModule {
     const options: SchedulerModuleOptions = {
       api: {
-        enabled: _options?.api?.enabled ?? DefaultSchedulerModuleOptions.api.enabled,
-        prefix: _options?.api?.prefix ?? DefaultSchedulerModuleOptions.api.prefix,
+        enabled: _options?.api?.enabled ?? GlobalSchedulerModuleOptions.api.enabled,
+        prefix: _options?.api?.prefix ?? GlobalSchedulerModuleOptions.api.prefix,
       },
       scheduler: {
         implementation:
           _options?.scheduler?.implementation ??
-          DefaultSchedulerModuleOptions.scheduler.implementation,
-        types: _options?.scheduler?.types ?? DefaultSchedulerModuleOptions.scheduler.types,
+          GlobalSchedulerModuleOptions.scheduler.implementation,
+        types: _options?.scheduler?.types ?? GlobalSchedulerModuleOptions.scheduler.types,
       },
       storage: {
-        type: _options?.storage?.type ?? DefaultSchedulerModuleOptions.storage.type,
+        type: _options?.storage?.type ?? GlobalSchedulerModuleOptions.storage.type,
         postgres: {
           schema:
             _options?.storage?.postgres?.schema ??
-            DefaultSchedulerModuleOptions.storage.postgres.schema,
+            GlobalSchedulerModuleOptions.storage.postgres.schema,
           migrationTable:
             _options?.storage?.postgres?.migrationTable ??
-            DefaultSchedulerModuleOptions.storage.postgres.migrationTable,
+            GlobalSchedulerModuleOptions.storage.postgres.migrationTable,
         },
       },
     };
 
-    DefaultSchedulerModuleOptions.api = options.api;
-    DefaultSchedulerModuleOptions.scheduler = options.scheduler;
-    DefaultSchedulerModuleOptions.storage = options.storage;
+    GlobalSchedulerModuleOptions.api = options.api;
+    GlobalSchedulerModuleOptions.scheduler = options.scheduler;
+    GlobalSchedulerModuleOptions.storage = options.storage;
 
     if (options.storage.type === 'mongo') {
       throw new Error('Mongo storage is not supported yet');

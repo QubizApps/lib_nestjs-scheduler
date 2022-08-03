@@ -23,7 +23,7 @@ export interface SchedulerModuleOptions {
 
 export class SchedulerModuleOptions {}
 
-export const DefaultSchedulerModuleOptions: SchedulerModuleOptions = {
+export const GlobalSchedulerModuleOptions: SchedulerModuleOptions = {
   scheduler: {
     types: [],
     implementation: NestJsSchedulerService,

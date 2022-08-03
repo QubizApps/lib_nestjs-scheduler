@@ -1,15 +1,15 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
-import { DefaultSchedulerModuleOptions } from '../../../../SchedulerModuleOptions';
+import { GlobalSchedulerModuleOptions } from '../../../../SchedulerModuleOptions';
 
 export class Init1659455968864 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.createSchema(DefaultSchedulerModuleOptions.storage.postgres.schema, true);
+    await queryRunner.createSchema(GlobalSchedulerModuleOptions.storage.postgres.schema, true);
 
     await queryRunner.createTable(
       new Table({
         name: 'scheduled_task',
-        schema: DefaultSchedulerModuleOptions.storage.postgres.schema,
+        schema: GlobalSchedulerModuleOptions.storage.postgres.schema,
         columns: [
           {
             name: 'id',
@@ -87,7 +87,7 @@ export class Init1659455968864 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropTable(
-      `${DefaultSchedulerModuleOptions.storage.postgres.schema}.scheduled_task`,
+      `${GlobalSchedulerModuleOptions.storage.postgres.schema}.scheduled_task`,
       true,
       true,
       true,

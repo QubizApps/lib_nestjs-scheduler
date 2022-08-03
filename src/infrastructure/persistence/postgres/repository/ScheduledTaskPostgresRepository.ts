@@ -17,7 +17,9 @@ export class ScheduledTaskPostgresRepository implements ScheduledTaskRepository 
     @InjectRepository(ScheduledTaskPostgresDao)
     private readonly repo: Repository<ScheduledTaskPostgresDao>,
     private readonly moduleOptions: SchedulerModuleOptions,
-  ) {}
+  ) {
+    this.repo.metadata.schema = this.moduleOptions.storage.postgres.schema;
+  }
 
   async get(id: Uuid): Promise<ScheduledTask | undefined> {
     return this.repo
