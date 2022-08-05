@@ -72,6 +72,14 @@ export class Init1659455968864 implements MigrationInterface {
             name: 'scheduled_task_type_index',
             columnNames: ['type'],
           },
+          {
+            name: 'scheduled_task_task_type_index',
+            columnNames: ['task_type'],
+          },
+          {
+            name: 'scheduled_task_status_index',
+            columnNames: ['status'],
+          },
         ],
       }),
       true,

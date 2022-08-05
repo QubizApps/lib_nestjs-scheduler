@@ -21,6 +21,7 @@ export const domainToDto = (task: ScheduledTask): ScheduledTaskApiDto => {
     type: state.type,
     interval: state.interval,
     params: state.params,
+    tags: state.tags,
     status: state.status,
     runAt: state.runAt,
     completedAt: state.completedAt,

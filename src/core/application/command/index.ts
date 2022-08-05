@@ -4,9 +4,11 @@ import { RemoveScheduledTaskHandler } from './RemoveScheduledTaskHandler';
 import { RunScheduledTaskHandler } from './RunScheduledTaskHandler';
 import { StartScheduledTaskHandler } from './StartScheduledTaskHandler';
 import { StopScheduledTaskHandler } from './StopScheduledTaskHandler';
+import { UpdateScheduledTaskHandler } from './UpdateScheduledTaskHandler';
 
 export const commandHandlers = [
   AddScheduledTaskHandler,
+  UpdateScheduledTaskHandler,
   ReloadScheduledTasksHandler,
   RemoveScheduledTaskHandler,
   StartScheduledTaskHandler,

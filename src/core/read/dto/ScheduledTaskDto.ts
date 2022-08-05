@@ -10,6 +10,7 @@ export type ScheduledTaskDto = {
   interval: string;
   status: ScheduledTaskStatus;
   params: { [key: string]: any };
+  tags: { [key: string]: string };
   output?: {
     data: { [key: string]: any };
   };

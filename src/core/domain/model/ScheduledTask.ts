@@ -4,6 +4,7 @@ import {
   ScheduledTaskCompleted,
   ScheduledTaskCreated,
   ScheduledTaskFailed,
+  ScheduledTaskIntervalChanged,
   ScheduledTaskRemoved,
   ScheduledTaskRun,
   ScheduledTaskStarted,
@@ -15,6 +16,7 @@ export type ScheduledTaskState = AggregateRootState<Uuid> & {
   name: string;
   type: string;
   interval: string;
+  tags: { [key: string]: string };
   params: { [key: string]: any };
   status: ScheduledTaskStatus;
   output?: {
@@ -35,11 +37,19 @@ export class ScheduledTask extends AggregateRoot<Uuid, ScheduledTaskState> {
     name: string;
     type: string;
     interval: string;
-    params: { [key: string]: any };
-    autostart: boolean;
+    params?: { [key: string]: any };
+    tags?: { [key: string]: string };
+    autostart?: boolean;
   }): ScheduledTask {
+    const { id, name, type, interval } = data;
+
     const instance = ScheduledTask.fromState({
-      ...data,
+      id,
+      name,
+      type,
+      interval,
+      params: data.params || {},
+      tags: data.tags || {},
       status: ScheduledTaskStatus.Stopped,
       createdAt: new Date(),
     });
@@ -49,7 +59,7 @@ export class ScheduledTask extends AggregateRoot<Uuid, ScheduledTaskState> {
         type: data.type,
         taskType: instance.taskType,
         interval: data.interval,
-        params: data.params,
+        params: data.params || {},
       }),
     );
 
@@ -168,6 +178,9 @@ export class ScheduledTask extends AggregateRoot<Uuid, ScheduledTaskState> {
   get name(): string {
     return this._state.name;
   }
+  set name(value: string) {
+    this._state.name = value;
+  }
 
   get type(): string {
     return this._state.type;
@@ -176,9 +189,35 @@ export class ScheduledTask extends AggregateRoot<Uuid, ScheduledTaskState> {
   get interval(): string {
     return this._state.interval;
   }
+  set interval(value: string) {
+    if (value === this._state.interval) {
+      return;
+    }
+
+    this._state.interval = value;
+
+    this.apply(
+      new ScheduledTaskIntervalChanged(this, {
+        type: this._state.type,
+        taskType: this.taskType,
+        interval: this._state.interval,
+        params: this._state.params,
+      }),
+    );
+  }
 
   get params(): { [key: string]: any } {
     return this._state.params;
+  }
+  set params(value: { [key: string]: any }) {
+    this._state.params = value;
+  }
+
+  get tags(): { [key: string]: string } {
+    return this._state.tags;
+  }
+  set tags(value: { [key: string]: string }) {
+    this._state.tags = value;
   }
 
   get status(): ScheduledTaskStatus {

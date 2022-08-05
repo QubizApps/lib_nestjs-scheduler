@@ -42,6 +42,7 @@
     "@nestjs/swagger": "^6.0.4",
     "@nestjs/typeorm": "^9.0.0",
     "@qubizapps/nestjs-commons": "^0.0.8",
+    "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
     "pg": "^8.7.3",
     "typeorm": "^0.3.7"
@@ -60,6 +61,7 @@
     "@types/cron": "^2.0.0",
     "@typescript-eslint/eslint-plugin": "^5.9.0",
     "@typescript-eslint/parser": "^5.9.0",
+    "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
     "eslint": "^8.11.0",
     "eslint-config-prettier": "^8.3.0",

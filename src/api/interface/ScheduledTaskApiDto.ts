@@ -29,6 +29,9 @@ export class ScheduledTaskApiDto {
   @ApiProperty({ type: Object })
   params!: { [key: string]: any };
 
+  @ApiProperty({ type: Object })
+  tags!: { [key: string]: string };
+
   @ApiProperty()
   status!: string;
 

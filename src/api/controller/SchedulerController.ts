@@ -1,6 +1,17 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiExtraModels, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiExtraModels, ApiQuery, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger';
+import { Uuid } from '@qubizapps/nestjs-commons';
 
 import {
   AddScheduledTask,
@@ -9,11 +20,15 @@ import {
   RunScheduledTask,
   StartScheduledTask,
   StopScheduledTask,
+  UpdateScheduledTask,
 } from '../../core/application/command/commands';
 import { GetScheduledTasks } from '../../core/application/query/queries';
-import { FinderResult, ScheduledTask, ScheduledTaskDto } from '../../index';
+import { FinderResult, ScheduledTask, ScheduledTaskDto, ScheduledTaskStatus } from '../../index';
 import { SchedulerModuleOptions } from '../../SchedulerModuleOptions';
 import { AddScheduledTaskInputDto } from '../interface/input/AddScheduledTaskInputDto';
+import { UpdateScheduledTaskInputDto } from '../interface/input/UpdateScheduledTaskInputDto';
+import { GetScheduledTasksQueryParamsDto } from '../interface/query-params/GetScheduledTasksQueryParamsDto';
+import { PaginationQueryParamsDto } from '../interface/query-params/PaginationQueryParamsDto';
 import { ResultApiDto } from '../interface/ResultApiDto';
 import { ScheduledTaskApiDto } from '../interface/ScheduledTaskApiDto';
 import { ScheduledTaskApiMapper } from '../mapper/index';
@@ -34,11 +49,51 @@ export class SchedulerController {
   }
 
   @Get('/tasks')
+  @ApiQuery({
+    name: 'ids',
+    explode: false,
+    type: String,
+    isArray: true,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'types',
+    explode: false,
+    type: String,
+    isArray: true,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'taskTypes',
+    explode: false,
+    enum: ['cronjob', 'interval'],
+    isArray: true,
+    required: false,
+  })
+  @ApiQuery({
+    name: 'statuses',
+    explode: false,
+    enum: ScheduledTaskStatus,
+    isArray: true,
+    required: false,
+  })
+  @ApiQuery({
+    schema: {
+      allOf: [
+        { $ref: getSchemaPath(GetScheduledTasksQueryParamsDto) },
+        { $ref: getSchemaPath(PaginationQueryParamsDto) },
+      ],
+    },
+  })
   @ApiExtraModels(ScheduledTaskApiDto)
   @ApiResponse({ status: 200, schema: ApiResultDtoResponse(ScheduledTaskApiDto, true) })
-  async getScheduledTasks(): Promise<ResultApiDto<ScheduledTaskApiDto[]>> {
+  async getScheduledTasks(
+    @Query() params: GetScheduledTasksQueryParamsDto,
+  ): Promise<ResultApiDto<ScheduledTaskApiDto[]>> {
     return this.queries
-      .execute<GetScheduledTasks, FinderResult<ScheduledTaskDto[]>>(new GetScheduledTasks({}))
+      .execute<GetScheduledTasks, FinderResult<ScheduledTaskDto[]>>(
+        new GetScheduledTasks({ ...params }),
+      )
       .then((res) => ({
         ...res,
         data: res.data.map(ScheduledTaskApiMapper.readDtoToApiDto) as ScheduledTaskApiDto[],
@@ -74,12 +129,24 @@ export class SchedulerController {
       .execute<AddScheduledTask, ScheduledTask>(
         new AddScheduledTask({
           ...input,
-          params: input.params ?? {},
         }),
       )
       .then((task) => ({
         data: ScheduledTaskApiMapper.domainToDto(task),
       }));
+  }
+
+  @Put('/tasks/:id')
+  async updateScheduledTask(
+    @Param('id') id: string,
+    @Body() input: UpdateScheduledTaskInputDto,
+  ): Promise<void> {
+    return this.commands.execute(
+      new UpdateScheduledTask({
+        id: Uuid.fromString(id),
+        ...input,
+      }),
+    );
   }
 
   @Post('/tasks/reload')

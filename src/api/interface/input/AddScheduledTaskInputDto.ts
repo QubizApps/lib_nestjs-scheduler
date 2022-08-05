@@ -1,8 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsNotEmpty, IsObject, IsOptional, Matches } from 'class-validator';
 
-const INTERVAL_REGEX =
-  /(@(yearly|monthly|weekly|daily|hourly))|(@every (\d+(ns|us|µs|ms|s|m|h)))|((((\d+,)+\d+|(\d+(\/|-)\d+)|\d+|\*) ?){5,7})/;
+import { INTERVAL_REGEX } from '../../../constants';
 
 export class AddScheduledTaskInputDto {
   @ApiProperty()
@@ -22,6 +21,11 @@ export class AddScheduledTaskInputDto {
   @IsOptional()
   @IsObject()
   params?: { [key: string]: any };
+
+  @ApiPropertyOptional({ type: Object })
+  @IsOptional()
+  @IsObject()
+  tags?: { [key: string]: string };
 
   @ApiPropertyOptional()
   @IsOptional()

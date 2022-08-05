@@ -6,6 +6,7 @@ export class ScheduledTaskPostgresDao {
   type!: string;
   taskType!: string;
   interval!: string;
+  tags!: { [key: string]: string };
   state!: { [key: string]: any };
   status!: string;
   runAt?: Date;
@@ -39,6 +40,9 @@ export const ScheduledTaskPostgresEntitySchema = (schema: string) =>
       interval: {
         type: 'varchar',
         length: 255,
+      },
+      tags: {
+        type: 'jsonb',
       },
       state: {
         type: 'jsonb',

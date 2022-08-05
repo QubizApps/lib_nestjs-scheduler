@@ -46,6 +46,10 @@ export class ScheduledTaskPostgresFinder implements ScheduledTaskFinder {
       qb.andWhere('task.status IN (:...statuses)', { statuses: filters.statuses });
     }
 
+    if (filters.tags) {
+      qb.andWhere('task.tags @> :tags::jsonb', { tags: JSON.stringify(filters.tags) });
+    }
+
     if (filters.offset) {
       qb.offset(filters.offset);
     }

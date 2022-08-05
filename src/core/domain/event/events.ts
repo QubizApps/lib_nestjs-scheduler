@@ -45,3 +45,8 @@ export class ScheduledTaskFailed extends DomainEvent<
     error?: { message: string; stack?: string };
   }
 > {}
+
+export class ScheduledTaskIntervalChanged extends DomainEvent<
+  ScheduledTask,
+  ScheduledTaskEventBasePayload
+> {}

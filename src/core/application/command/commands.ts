@@ -1,11 +1,20 @@
-import { Command } from '@qubizapps/nestjs-commons';
+import { Command, Uuid } from '@qubizapps/nestjs-commons';
 
 export class AddScheduledTask extends Command<{
   name: string;
   type: string;
   interval: string;
-  params: { [key: string]: any };
+  params?: { [key: string]: any };
+  tags?: { [key: string]: string };
   autostart?: boolean;
+}> {}
+
+export class UpdateScheduledTask extends Command<{
+  id: Uuid;
+  name?: string;
+  interval?: string;
+  params?: { [key: string]: any };
+  tags?: { [key: string]: string };
 }> {}
 
 export class StartScheduledTask extends Command<{

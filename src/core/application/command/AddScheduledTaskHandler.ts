@@ -22,6 +22,7 @@ export class AddScheduledTaskHandler implements ICommandHandler<AddScheduledTask
       type: command.payload.type,
       interval: command.payload.interval,
       params: command.payload.params,
+      tags: command.payload.tags,
       autostart: command.payload.autostart ?? false,
     });
 
