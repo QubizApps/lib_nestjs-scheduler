@@ -38,7 +38,7 @@ export class PostgresMigrationRunner implements MigrationRunner {
       `SET search_path TO ${this.moduleOptions.storage.postgres.schema},public,postgis;`,
     );
 
-    await this.connection.runMigrations();
+    await this.connection.runMigrations({ transaction: 'each' });
 
     await this.connection.destroy();
   }
