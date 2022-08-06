@@ -30,7 +30,6 @@ import { SchedulerModuleOptions } from '../../SchedulerModuleOptions';
 import { AddScheduledTaskInputDto } from '../interface/input/AddScheduledTaskInputDto';
 import { UpdateScheduledTaskInputDto } from '../interface/input/UpdateScheduledTaskInputDto';
 import { GetScheduledTasksQueryParamsDto } from '../interface/query-params/GetScheduledTasksQueryParamsDto';
-import { PaginationQueryParamsDto } from '../interface/query-params/PaginationQueryParamsDto';
 import { ResultApiDto } from '../interface/ResultApiDto';
 import { ScheduledTaskApiDto } from '../interface/ScheduledTaskApiDto';
 import { ScheduledTaskApiMapper } from '../mapper/index';
@@ -51,10 +50,10 @@ export class SchedulerController {
   }
 
   @Get('/tasks')
-  @ApiExtraModels(GetScheduledTasksQueryParamsDto, PaginationQueryParamsDto, ScheduledTaskApiDto)
+  @ApiExtraModels(ScheduledTaskApiDto)
   @ApiResponse({ status: 200, schema: ApiResultDtoResponse(ScheduledTaskApiDto, true) })
   async getScheduledTasks(
-    @Query() params: GetScheduledTasksQueryParamsDto & PaginationQueryParamsDto,
+    @Query() params: GetScheduledTasksQueryParamsDto,
   ): Promise<ResultApiDto<ScheduledTaskApiDto[]>> {
     const { tags } = params;
 

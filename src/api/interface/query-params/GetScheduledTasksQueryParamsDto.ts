@@ -1,5 +1,15 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsIn, IsJSON, IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
+import { Transform } from 'class-transformer';
+import {
+  IsEnum,
+  IsIn,
+  IsJSON,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsUUID,
+  Min,
+} from 'class-validator';
 
 import { ScheduledTaskStatus, ScheduledTaskType } from '../../../core/domain/model/types';
 
@@ -28,4 +38,18 @@ export class GetScheduledTasksQueryParamsDto {
   @IsJSON({ each: true })
   @ApiPropertyOptional({ type: String, isArray: true })
   tags?: string[];
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Transform((value) => +value)
+  @ApiPropertyOptional()
+  offset?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Transform((value) => +value)
+  @ApiPropertyOptional()
+  limit?: number;
 }
