@@ -89,6 +89,6 @@ export class Migration1659455968864 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('scheduled_task', true, true, true);
+    await queryRunner.dropTable(new Table({ name: 'scheduled_task' }), true, true, true);
   }
 }

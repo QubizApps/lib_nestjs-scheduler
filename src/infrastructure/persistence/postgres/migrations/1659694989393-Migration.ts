@@ -1,9 +1,9 @@
-import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm';
+import { MigrationInterface, QueryRunner, Table, TableColumn } from 'typeorm';
 
 export class Migration1659694989393 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.addColumn(
-      'scheduled_task',
+      new Table({ name: 'scheduled_task' }),
       new TableColumn({
         name: 'tags',
         type: 'jsonb',
@@ -12,7 +12,7 @@ export class Migration1659694989393 implements MigrationInterface {
     );
 
     await queryRunner.query(
-      'CREATE INDEX scheduled_task_tags_idx ON scheduled_task USING gin(tags)',
+      `CREATE INDEX scheduled_task_tags_idx ON scheduled_task USING gin(tags)`,
     );
   }
 
