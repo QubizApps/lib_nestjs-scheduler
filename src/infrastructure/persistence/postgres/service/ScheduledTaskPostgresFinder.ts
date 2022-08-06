@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
+import { Brackets, DataSource, Repository } from 'typeorm';
 
 import { ScheduledTaskDto } from '../../../../core/read/dto/ScheduledTaskDto';
 import {
@@ -31,23 +31,29 @@ export class ScheduledTaskPostgresFinder implements ScheduledTaskFinder {
     const qb = this.repo.createQueryBuilder('task');
 
     if (filters.ids) {
-      qb.andWhere('task.id IN (:...ids)', { ids: filters.ids });
+      qb.andWhere('task.id = ANY(:ids)', { ids: filters.ids });
     }
 
     if (filters.types) {
-      qb.andWhere('task.type IN (:...types)', { types: filters.types });
+      qb.andWhere('task.type = ANY(:types)', { types: filters.types });
     }
 
     if (filters.taskTypes) {
-      qb.andWhere('task.taskType IN (:...taskTypes)', { taskTypes: filters.taskTypes });
+      qb.andWhere('task.taskType = ANY(:taskTypes)', { taskTypes: filters.taskTypes });
     }
 
     if (filters.statuses) {
-      qb.andWhere('task.status IN (:...statuses)', { statuses: filters.statuses });
+      qb.andWhere('task.status = ANY(:statuses)', { statuses: filters.statuses });
     }
 
     if (filters.tags) {
-      qb.andWhere('task.tags @> :tags::jsonb', { tags: JSON.stringify(filters.tags) });
+      qb.andWhere(
+        new Brackets((query) => {
+          filters.tags?.forEach((tags) => {
+            query.orWhere('task.tags @> :tags', { tags });
+          });
+        }),
+      );
     }
 
     if (filters.offset) {

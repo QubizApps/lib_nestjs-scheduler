@@ -93,9 +93,11 @@ export class SchedulerController {
   async getScheduledTasks(
     @Query() params: GetScheduledTasksQueryParamsDto,
   ): Promise<ResultApiDto<ScheduledTaskApiDto[]>> {
+    const { tags } = params;
+
     return this.queries
       .execute<GetScheduledTasks, FinderResult<ScheduledTaskDto[]>>(
-        new GetScheduledTasks({ ...params }),
+        new GetScheduledTasks({ ...params, tags: tags?.map((t) => JSON.parse(t)) }),
       )
       .then((res) => ({
         ...res,

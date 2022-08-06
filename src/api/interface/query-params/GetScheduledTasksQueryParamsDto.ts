@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsEnum, IsIn, IsNotEmpty, IsObject, IsOptional, IsUUID } from 'class-validator';
+import { IsEnum, IsIn, IsJSON, IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
 
 import { ScheduledTaskStatus, ScheduledTaskType } from '../../../core/domain/model/types';
 
@@ -26,7 +26,7 @@ export class GetScheduledTasksQueryParamsDto {
   statuses?: ScheduledTaskStatus[];
 
   @IsOptional()
-  @IsObject()
-  @ApiPropertyOptional({ type: Object })
-  tags?: { [key: string]: string };
+  @IsJSON({ each: true })
+  @ApiPropertyOptional({ type: String, isArray: true })
+  tags?: string[];
 }

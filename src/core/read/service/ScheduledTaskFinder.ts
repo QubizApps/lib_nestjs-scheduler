@@ -7,7 +7,7 @@ export type ScheduledTaskFilters = {
   types?: string[];
   taskTypes?: ScheduledTaskType[];
   statuses?: ScheduledTaskStatus[];
-  tags?: { [key: string]: string };
+  tags?: { [key: string]: string }[];
   offset?: number;
   limit?: number;
 };
