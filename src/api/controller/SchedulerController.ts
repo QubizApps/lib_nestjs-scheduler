@@ -88,7 +88,7 @@ export class SchedulerController {
       ],
     },
   })
-  @ApiExtraModels(ScheduledTaskApiDto)
+  @ApiExtraModels(GetScheduledTasksQueryParamsDto, PaginationQueryParamsDto, ScheduledTaskApiDto)
   @ApiResponse({ status: 200, schema: ApiResultDtoResponse(ScheduledTaskApiDto, true) })
   async getScheduledTasks(
     @Query() params: GetScheduledTasksQueryParamsDto,
@@ -114,7 +114,6 @@ export class SchedulerController {
         new GetScheduledTasks({ ids: [id] }),
       )
       .then((res) => ({
-        ...res,
         data: ScheduledTaskApiMapper.readDtoToApiDto(res.data?.[0]),
       }));
   }

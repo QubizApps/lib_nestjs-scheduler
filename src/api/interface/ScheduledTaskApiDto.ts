@@ -24,6 +24,9 @@ export class ScheduledTaskApiDto {
   type!: string;
 
   @ApiProperty()
+  taskType!: string;
+
+  @ApiProperty()
   interval!: string;
 
   @ApiProperty({ type: Object })

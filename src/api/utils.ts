@@ -9,9 +9,10 @@ export const ApiResultDtoResponse = (
     data: isArray
       ? { type: 'array', items: { $ref: getSchemaPath(model) } }
       : { $ref: getSchemaPath(model) },
-    total: { type: 'number' },
-    offset: { type: 'number' },
-    limit: { type: 'number' },
+
+    ...(isArray
+      ? { total: { type: 'number' }, offset: { type: 'number' }, limit: { type: 'number' } }
+      : {}),
   },
   required: ['data'],
 });

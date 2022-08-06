@@ -13,13 +13,13 @@ import { UpdateScheduledTask } from './commands';
 export class UpdateScheduledTaskHandler implements ICommandHandler<UpdateScheduledTask> {
   constructor(private readonly repo: ScheduledTaskRepository, private readonly logger: Logger) {}
 
-  async execute(command: UpdateScheduledTask): Promise<any> {
+  async execute(command: UpdateScheduledTask): Promise<void> {
     const task = await this.repo.get(command.payload.id);
     if (!task) {
       throw new NotFoundException(`Task with id ${command.payload.id.toString()} not found`);
     }
 
-    if (command.payload.name) {
+    if (command.payload.name && command.payload.name !== task.name) {
       const exists = await this.repo.getByName(command.payload.name);
       if (exists) {
         throw new BadRequestException(`Task with name ${command.payload.name} already exists`);
@@ -33,8 +33,6 @@ export class UpdateScheduledTaskHandler implements ICommandHandler<UpdateSchedul
 
     try {
       await this.repo.save(task);
-
-      return task;
     } catch (e: any) {
       this.logger.error(e.message || e, e.stack?.toString(), this.constructor.name);
 
