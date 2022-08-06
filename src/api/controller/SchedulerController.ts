@@ -29,7 +29,10 @@ import { FinderResult } from '../../core/read/service/types';
 import { SchedulerModuleOptions } from '../../SchedulerModuleOptions';
 import { AddScheduledTaskInputDto } from '../interface/input/AddScheduledTaskInputDto';
 import { UpdateScheduledTaskInputDto } from '../interface/input/UpdateScheduledTaskInputDto';
-import { GetScheduledTasksQueryParamsDto } from '../interface/query-params/GetScheduledTasksQueryParamsDto';
+import {
+  GetScheduledTasksQueryParams,
+  GetScheduledTasksQueryParamsDto,
+} from '../interface/query-params/GetScheduledTasksQueryParamsDto';
 import { ResultApiDto } from '../interface/ResultApiDto';
 import { ScheduledTaskApiDto } from '../interface/ScheduledTaskApiDto';
 import { ScheduledTaskApiMapper } from '../mapper/index';
@@ -50,6 +53,7 @@ export class SchedulerController {
   }
 
   @Get('/tasks')
+  @GetScheduledTasksQueryParams()
   @ApiExtraModels(ScheduledTaskApiDto)
   @ApiResponse({ status: 200, schema: ApiResultDtoResponse(ScheduledTaskApiDto, true) })
   async getScheduledTasks(

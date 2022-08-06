@@ -1,4 +1,5 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { applyDecorators } from '@nestjs/common';
+import { ApiQuery } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import {
   IsEnum,
@@ -15,46 +16,69 @@ import { ScheduledTaskStatus, ScheduledTaskType } from '../../../core/domain/mod
 
 export class GetScheduledTasksQueryParamsDto {
   @IsOptional()
+  @Transform((t) => t.value.split(','))
   @IsUUID(4, { each: true })
-  @Transform((value) => (!Array.isArray(value) ? [value] : value))
-  @ApiPropertyOptional({ type: String, isArray: true })
   ids?: string[];
 
   @IsOptional()
+  @Transform((t) => t.value.split(','))
   @IsNotEmpty({ each: true })
-  @Transform((value) => (!Array.isArray(value) ? [value] : value))
-  @ApiPropertyOptional({ type: String, isArray: true })
   types?: string[];
 
   @IsOptional()
+  @Transform((t) => t.value.split(','))
   @IsIn(['interval', 'cronjob'], { each: true })
-  @Transform((value) => (!Array.isArray(value) ? [value] : value))
-  @ApiPropertyOptional({ enum: ['interval', 'cronjob'], isArray: true })
   taskTypes?: ScheduledTaskType[];
 
   @IsOptional()
+  @Transform((t) => t.value.split(','))
   @IsEnum(ScheduledTaskStatus, { each: true })
-  @Transform((value) => (!Array.isArray(value) ? [value] : value))
-  @ApiPropertyOptional({ enum: ScheduledTaskStatus, isArray: true })
   statuses?: ScheduledTaskStatus[];
 
   @IsOptional()
+  @Transform((t) => t.value.split('|'))
   @IsJSON({ each: true })
-  @Transform((value) => (!Array.isArray(value) ? [value] : value))
-  @ApiPropertyOptional({ type: String, isArray: true })
   tags?: string[];
 
   @IsOptional()
+  @Transform((t) => +t.value)
   @IsNumber()
   @Min(0)
-  @Transform((value) => +value)
-  @ApiPropertyOptional()
   offset?: number;
 
   @IsOptional()
+  @Transform((t) => +t.value)
   @IsNumber()
   @Min(0)
-  @Transform((value) => +value)
-  @ApiPropertyOptional()
   limit?: number;
 }
+
+export const GetScheduledTasksQueryParams = () =>
+  applyDecorators(
+    ApiQuery({ name: 'ids', explode: false, type: String, isArray: true, required: false }),
+    ApiQuery({ name: 'types', explode: false, type: String, isArray: true, required: false }),
+    ApiQuery({
+      name: 'taskTypes',
+      explode: false,
+      enum: ['interval', 'cronjob'],
+      isArray: true,
+      required: false,
+    }),
+    ApiQuery({
+      name: 'statuses',
+      explode: false,
+      enum: ScheduledTaskStatus,
+      isArray: true,
+      required: false,
+    }),
+    ApiQuery({
+      name: 'tags',
+      explode: false,
+      type: String,
+      isArray: true,
+      required: false,
+      style: 'pipeDelimited',
+    }),
+    ApiQuery({ name: 'offset', type: Number, required: false }),
+    ApiQuery({ name: 'limit', type: Number, required: false }),
+  );
