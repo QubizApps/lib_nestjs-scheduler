@@ -16,26 +16,31 @@ import { ScheduledTaskStatus, ScheduledTaskType } from '../../../core/domain/mod
 export class GetScheduledTasksQueryParamsDto {
   @IsOptional()
   @IsUUID(4, { each: true })
+  @Transform((value) => (!Array.isArray(value) ? [value] : value))
   @ApiPropertyOptional({ type: String, isArray: true })
   ids?: string[];
 
   @IsOptional()
   @IsNotEmpty({ each: true })
+  @Transform((value) => (!Array.isArray(value) ? [value] : value))
   @ApiPropertyOptional({ type: String, isArray: true })
   types?: string[];
 
   @IsOptional()
   @IsIn(['interval', 'cronjob'], { each: true })
+  @Transform((value) => (!Array.isArray(value) ? [value] : value))
   @ApiPropertyOptional({ enum: ['interval', 'cronjob'], isArray: true })
   taskTypes?: ScheduledTaskType[];
 
   @IsOptional()
   @IsEnum(ScheduledTaskStatus, { each: true })
+  @Transform((value) => (!Array.isArray(value) ? [value] : value))
   @ApiPropertyOptional({ enum: ScheduledTaskStatus, isArray: true })
   statuses?: ScheduledTaskStatus[];
 
   @IsOptional()
   @IsJSON({ each: true })
+  @Transform((value) => (!Array.isArray(value) ? [value] : value))
   @ApiPropertyOptional({ type: String, isArray: true })
   tags?: string[];
 
