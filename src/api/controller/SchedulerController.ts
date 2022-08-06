@@ -23,7 +23,10 @@ import {
   UpdateScheduledTask,
 } from '../../core/application/command/commands';
 import { GetScheduledTasks } from '../../core/application/query/queries';
-import { FinderResult, ScheduledTask, ScheduledTaskDto, ScheduledTaskStatus } from '../../index';
+import { ScheduledTask } from '../../core/domain/model/ScheduledTask';
+import { ScheduledTaskStatus } from '../../core/domain/model/types';
+import { ScheduledTaskDto } from '../../core/read/dto/ScheduledTaskDto';
+import { FinderResult } from '../../core/read/service/types';
 import { SchedulerModuleOptions } from '../../SchedulerModuleOptions';
 import { AddScheduledTaskInputDto } from '../interface/input/AddScheduledTaskInputDto';
 import { UpdateScheduledTaskInputDto } from '../interface/input/UpdateScheduledTaskInputDto';
