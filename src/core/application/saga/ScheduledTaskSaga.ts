@@ -4,6 +4,7 @@ import { catchError, concatMap, filter, map, merge, Observable } from 'rxjs';
 
 import {
   ScheduledTaskCreated,
+  ScheduledTaskIntervalChanged,
   ScheduledTaskRemoved,
   ScheduledTaskStarted,
   ScheduledTaskStopped,
@@ -26,12 +27,21 @@ export class ScheduledTaskSaga {
       $events.pipe(ofType(ScheduledTaskCreated)),
       $events.pipe(ofType(ScheduledTaskStarted)),
       $events.pipe(ofType(ScheduledTaskStopped)),
+      $events.pipe(ofType(ScheduledTaskIntervalChanged)),
     ).pipe(
       concatMap<
-        ScheduledTaskCreated | ScheduledTaskStarted | ScheduledTaskStopped,
+        | ScheduledTaskCreated
+        | ScheduledTaskStarted
+        | ScheduledTaskStopped
+        | ScheduledTaskIntervalChanged,
         Promise<
           [
-            ScheduledTaskCreated | ScheduledTaskStarted | ScheduledTaskStopped,
+            (
+              | ScheduledTaskCreated
+              | ScheduledTaskStarted
+              | ScheduledTaskStopped
+              | ScheduledTaskIntervalChanged
+            ),
             ScheduledTask | undefined,
           ]
         >
@@ -51,6 +61,11 @@ export class ScheduledTaskSaga {
 
           case ScheduledTaskStopped:
             this.scheduler.stop(task);
+            break;
+
+          case ScheduledTaskIntervalChanged:
+            this.scheduler.remove(task.id);
+            this.scheduler.add(task);
             break;
         }
       }),

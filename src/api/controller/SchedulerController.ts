@@ -10,7 +10,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiExtraModels, ApiQuery, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger';
+import { ApiExtraModels, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Uuid } from '@qubizapps/nestjs-commons';
 
 import {
@@ -24,7 +24,6 @@ import {
 } from '../../core/application/command/commands';
 import { GetScheduledTasks } from '../../core/application/query/queries';
 import { ScheduledTask } from '../../core/domain/model/ScheduledTask';
-import { ScheduledTaskStatus } from '../../core/domain/model/types';
 import { ScheduledTaskDto } from '../../core/read/dto/ScheduledTaskDto';
 import { FinderResult } from '../../core/read/service/types';
 import { SchedulerModuleOptions } from '../../SchedulerModuleOptions';
@@ -52,46 +51,10 @@ export class SchedulerController {
   }
 
   @Get('/tasks')
-  @ApiQuery({
-    name: 'ids',
-    explode: false,
-    type: String,
-    isArray: true,
-    required: false,
-  })
-  @ApiQuery({
-    name: 'types',
-    explode: false,
-    type: String,
-    isArray: true,
-    required: false,
-  })
-  @ApiQuery({
-    name: 'taskTypes',
-    explode: false,
-    enum: ['cronjob', 'interval'],
-    isArray: true,
-    required: false,
-  })
-  @ApiQuery({
-    name: 'statuses',
-    explode: false,
-    enum: ScheduledTaskStatus,
-    isArray: true,
-    required: false,
-  })
-  @ApiQuery({
-    schema: {
-      allOf: [
-        { $ref: getSchemaPath(GetScheduledTasksQueryParamsDto) },
-        { $ref: getSchemaPath(PaginationQueryParamsDto) },
-      ],
-    },
-  })
   @ApiExtraModels(GetScheduledTasksQueryParamsDto, PaginationQueryParamsDto, ScheduledTaskApiDto)
   @ApiResponse({ status: 200, schema: ApiResultDtoResponse(ScheduledTaskApiDto, true) })
   async getScheduledTasks(
-    @Query() params: GetScheduledTasksQueryParamsDto,
+    @Query() params: GetScheduledTasksQueryParamsDto & PaginationQueryParamsDto,
   ): Promise<ResultApiDto<ScheduledTaskApiDto[]>> {
     const { tags } = params;
 
