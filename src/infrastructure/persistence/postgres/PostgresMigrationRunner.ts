@@ -20,7 +20,7 @@ export class PostgresMigrationRunner implements MigrationRunner {
 
     await this.datasource
       .createQueryRunner()
-      .createSchema(this.moduleOptions.storage.postgres.schema);
+      .createSchema(this.moduleOptions.storage.postgres.schema, true);
 
     this.connection = new DataSource({
       ...options,
@@ -31,7 +31,7 @@ export class PostgresMigrationRunner implements MigrationRunner {
 
     await this.connection.initialize();
 
-    await this.connection.runMigrations();
+    await this.connection.runMigrations({ transaction: 'each' });
 
     await this.connection.destroy();
   }

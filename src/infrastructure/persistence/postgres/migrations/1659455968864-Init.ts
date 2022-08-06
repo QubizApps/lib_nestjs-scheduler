@@ -1,10 +1,13 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
-export class Migration1659455968864 implements MigrationInterface {
+export class Init1659455968864 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
+    const { schema } = queryRunner.connection.driver.options as any;
+
     await queryRunner.createTable(
       new Table({
         name: 'scheduled_task',
+        schema,
         columns: [
           {
             name: 'id',
@@ -89,6 +92,7 @@ export class Migration1659455968864 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable(new Table({ name: 'scheduled_task' }), true, true, true);
+    const { schema } = queryRunner.connection.driver.options as any;
+    await queryRunner.dropTable(new Table({ name: 'scheduled_task', schema }), true, true, true);
   }
 }
