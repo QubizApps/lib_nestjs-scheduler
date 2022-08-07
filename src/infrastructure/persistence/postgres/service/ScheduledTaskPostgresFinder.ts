@@ -49,8 +49,8 @@ export class ScheduledTaskPostgresFinder implements ScheduledTaskFinder {
     if (filters.tags) {
       qb.andWhere(
         new Brackets((query) => {
-          filters.tags?.forEach((tags) => {
-            query.orWhere('task.tags @> :tags', { tags });
+          filters.tags?.forEach((tags, idx) => {
+            query.orWhere(`task.tags @> :tags${idx}`, { [`tags${idx}`]: tags });
           });
         }),
       );
