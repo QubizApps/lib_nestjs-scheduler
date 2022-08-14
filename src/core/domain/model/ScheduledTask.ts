@@ -9,6 +9,7 @@ import {
   ScheduledTaskRun,
   ScheduledTaskStarted,
   ScheduledTaskStopped,
+  ScheduledTaskTypeChanged,
 } from '../event/events';
 import { ScheduledTaskStatus, ScheduledTaskType } from './types';
 
@@ -184,6 +185,18 @@ export class ScheduledTask extends AggregateRoot<Uuid, ScheduledTaskState> {
 
   get type(): string {
     return this._state.type;
+  }
+  set type(value: string) {
+    this._state.type = value;
+
+    this.apply(
+      new ScheduledTaskTypeChanged(this, {
+        type: this._state.type,
+        taskType: this.taskType,
+        interval: this._state.interval,
+        params: this._state.params,
+      }),
+    );
   }
 
   get interval(): string {

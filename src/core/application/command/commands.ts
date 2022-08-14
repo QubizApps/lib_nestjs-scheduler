@@ -12,6 +12,7 @@ export class AddScheduledTask extends Command<{
 export class UpdateScheduledTask extends Command<{
   id: Uuid;
   name?: string;
+  type?: string;
   interval?: string;
   params?: { [key: string]: any };
   tags?: { [key: string]: string };

@@ -27,6 +27,7 @@ export class UpdateScheduledTaskHandler implements ICommandHandler<UpdateSchedul
     }
 
     task.name = command.payload.name || task.name;
+    task.type = command.payload.type || task.type;
     task.interval = command.payload.interval || task.interval;
     task.params = command.payload.params || task.params;
     task.tags = command.payload.tags || task.tags;

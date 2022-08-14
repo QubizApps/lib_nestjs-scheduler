@@ -111,6 +111,10 @@ export class SchedulerController {
     @Param('id') id: string,
     @Body() input: UpdateScheduledTaskInputDto,
   ): Promise<void> {
+    if (input.type && !this.options.scheduler.types.includes(input.type)) {
+      throw new BadRequestException(`Task type ${input.type} is not allowed`);
+    }
+
     return this.commands.execute(
       new UpdateScheduledTask({
         id: Uuid.fromString(id),

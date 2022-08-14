@@ -8,6 +8,7 @@ import {
   ScheduledTaskRemoved,
   ScheduledTaskStarted,
   ScheduledTaskStopped,
+  ScheduledTaskTypeChanged,
 } from '../../domain/event/events';
 import { ScheduledTask } from '../../domain/model/ScheduledTask';
 import { ScheduledTaskRepository } from '../../domain/repository/ScheduledTaskRepository';
@@ -28,12 +29,14 @@ export class ScheduledTaskSaga {
       $events.pipe(ofType(ScheduledTaskStarted)),
       $events.pipe(ofType(ScheduledTaskStopped)),
       $events.pipe(ofType(ScheduledTaskIntervalChanged)),
+      $events.pipe(ofType(ScheduledTaskTypeChanged)),
     ).pipe(
       concatMap<
         | ScheduledTaskCreated
         | ScheduledTaskStarted
         | ScheduledTaskStopped
-        | ScheduledTaskIntervalChanged,
+        | ScheduledTaskIntervalChanged
+        | ScheduledTaskTypeChanged,
         Promise<
           [
             (
@@ -41,6 +44,7 @@ export class ScheduledTaskSaga {
               | ScheduledTaskStarted
               | ScheduledTaskStopped
               | ScheduledTaskIntervalChanged
+              | ScheduledTaskTypeChanged
             ),
             ScheduledTask | undefined,
           ]
@@ -64,6 +68,8 @@ export class ScheduledTaskSaga {
             break;
 
           case ScheduledTaskIntervalChanged:
+          case ScheduledTaskTypeChanged:
+            // reload task
             this.scheduler.remove(task.id);
             this.scheduler.add(task);
             break;
@@ -76,7 +82,8 @@ export class ScheduledTaskSaga {
     );
 
   removeTask = ($events: Observable<any>): Observable<any> =>
-    $events.pipe(ofType(ScheduledTaskRemoved)).pipe(
+    $events.pipe(
+      ofType(ScheduledTaskRemoved),
       map((event) => {
         this.scheduler.remove(event.payload.aggregateId);
       }),

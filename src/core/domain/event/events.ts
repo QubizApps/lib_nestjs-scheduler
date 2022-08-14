@@ -50,3 +50,8 @@ export class ScheduledTaskIntervalChanged extends DomainEvent<
   ScheduledTask,
   ScheduledTaskEventBasePayload
 > {}
+
+export class ScheduledTaskTypeChanged extends DomainEvent<
+  ScheduledTask,
+  ScheduledTaskEventBasePayload
+> {}

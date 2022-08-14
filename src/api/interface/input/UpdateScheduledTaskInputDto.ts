@@ -12,6 +12,11 @@ export class UpdateScheduledTaskInputDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsNotEmpty()
+  type?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsNotEmpty()
   @Matches(INTERVAL_REGEX)
   interval?: string;
 
