@@ -4,8 +4,6 @@ Dynamic management of scheduled tasks for NestJS. Default implementation is a wr
 
 ## Requirements
 
----
-
 This package assumes it will be installed in a NestJS project. Therefore, core nestjs packages are assumed to be already installed and are declared as peer dependencies. `@qubizapps/nestjs-commons` is also required.
 
 Required dependencies(should already be there for a NestJS project) + qubizapps packages
@@ -30,15 +28,11 @@ There is also expected that a typeorm connection is already configured per proje
 
 ## Installation
 
----
-
 ```bash
 $> npm install --save @qubizapps/nestjs-scheduler
 ```
 
 ## Configuration
-
----
 
 Register the `SchedulerModule` in your main NestJS module. You can add it to the top module, as the scheduler module will register itself as a global dynamic module. There will be also a `forRootAsync()` variant in the near future for a more flexible configuration approach.
 
@@ -106,8 +100,6 @@ Doing so will automatically apply an enum validation on the create/update task e
 
 ## Usage
 
----
-
 Before creating tasks via the API, you need to define task handlers in code. These can be any class that implements the `IScheduledTaskHandler<T>` interface and are registered as providers in your own nestjs modules.
 They also need to be decorated with the `ScheduledTaskHandler` decorator.
 
@@ -143,8 +135,6 @@ Implementation is expected to return a value corresponding to the output of the 
 The same goes with error handling. If task is failing for some reason(not handled by user space code), then error will be stored in the task's state and will be available via the API output. This way you can keep track of what is happening in the background.
 
 ## Creating a task
-
----
 
 To run the above code, a scheduled task needs to be defined, linking the task type to the value defined in the task handler decorator.
 You can use the swagger UI to test the API.
@@ -199,8 +189,6 @@ Short explanation of task options/fields
 
 ## Interval specs
 
----
-
 Interval needs to be a string following cronjob specs. It also support some special values like `@hourly`, `@daily`, `@monthly`, `@yearly` as shortcuts. All this will create a `cronjob` type of task.
 
 To create an `interval` task, interval option has the following format
@@ -213,12 +201,8 @@ Examples
 
 ## Task operations
 
----
-
 We advise you to check the API swagger UI to get familiar with the options available. The most important to mention are the ability to start/stop tasks(basically pausing/restarting their execution), force running tasks manually on the spot(ignoring scheduled interval or task status), listing tasks with advanced filtering capabilities etc.
 
 ## Advanced usage
-
----
 
 // TBW
