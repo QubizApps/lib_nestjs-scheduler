@@ -2,9 +2,10 @@ import { DynamicModule, Logger, Module, OnModuleInit, Provider, Type } from '@ne
 import { ModuleRef, ModulesContainer, RouterModule } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { Module as NestModule } from '@nestjs/core/injector/module';
-import { CqrsModule } from '@nestjs/cqrs';
+import { CqrsModule, EventPublisher } from '@nestjs/cqrs';
 import { ScheduleModule } from '@nestjs/schedule';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { getDataSourceToken, TypeOrmModule } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 
 import { ApiModule } from './api/ApiModule';
 import { SCHEDULED_TASK_HANDLER_METADATA } from './constants';
@@ -50,6 +51,7 @@ export class SchedulerModule implements OnModuleInit {
       storage: {
         type: _options?.storage?.type ?? 'postgres',
         postgres: {
+          connection: _options?.storage?.postgres?.connection ?? 'default',
           schema: _options?.storage?.postgres?.schema ?? 'public',
           migrationTable: _options?.storage?.postgres?.migrationTable ?? 'scheduler_migrations',
         },
@@ -85,22 +87,32 @@ export class SchedulerModule implements OnModuleInit {
 
     if (options.storage.type === 'postgres') {
       imports.push(
-        TypeOrmModule.forFeature([
-          ScheduledTaskPostgresEntitySchema(options.storage.postgres.schema),
-        ]),
+        TypeOrmModule.forFeature(
+          [ScheduledTaskPostgresEntitySchema(options.storage.postgres.schema)],
+          options.storage.postgres.connection,
+        ),
       );
       providers = providers.concat([
         {
           provide: ScheduledTaskRepository,
-          useClass: ScheduledTaskPostgresRepository,
+          useFactory: (events: EventPublisher, dt: DataSource) => {
+            return new ScheduledTaskPostgresRepository(events, dt, options);
+          },
+          inject: [EventPublisher, getDataSourceToken(options.storage.postgres.connection)],
         },
         {
           provide: ScheduledTaskFinder,
-          useClass: ScheduledTaskPostgresFinder,
+          useFactory: (dt: DataSource) => {
+            return new ScheduledTaskPostgresFinder(dt, options);
+          },
+          inject: [getDataSourceToken(options.storage.postgres.connection)],
         },
         {
           provide: MigrationRunner,
-          useClass: PostgresMigrationRunner,
+          useFactory: (dt: DataSource) => {
+            return new PostgresMigrationRunner(dt, options);
+          },
+          inject: [getDataSourceToken(options.storage.postgres.connection)],
         },
       ]);
     }

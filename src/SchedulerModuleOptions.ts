@@ -14,6 +14,7 @@ export interface SchedulerModuleOptions {
   storage: {
     type: 'postgres' | 'mongo';
     postgres: {
+      connection: string;
       schema: string;
       migrationTable: string;
     };

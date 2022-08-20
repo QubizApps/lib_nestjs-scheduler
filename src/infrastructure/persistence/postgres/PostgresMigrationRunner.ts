@@ -1,4 +1,3 @@
-import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions.js';
 
@@ -6,7 +5,6 @@ import { SchedulerModuleOptions } from '../../../SchedulerModuleOptions';
 import { MigrationRunner } from '../MigrationRunner';
 import { migrations } from './migrations/index';
 
-@Injectable()
 export class PostgresMigrationRunner implements MigrationRunner {
   private connection!: DataSource;
 

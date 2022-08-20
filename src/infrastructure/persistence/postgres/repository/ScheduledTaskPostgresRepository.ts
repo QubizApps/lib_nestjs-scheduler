@@ -1,4 +1,3 @@
-import { Injectable } from '@nestjs/common';
 import { EventPublisher } from '@nestjs/cqrs';
 import { Uuid } from '@qubizapps/nestjs-commons';
 import { DataSource, Repository } from 'typeorm';
@@ -12,7 +11,6 @@ import {
 } from '../dao/ScheduledTaskPostgresDao';
 import { ScheduledTaskPostgresMapper } from '../mapper/index';
 
-@Injectable()
 export class ScheduledTaskPostgresRepository implements ScheduledTaskRepository {
   private repo: Repository<ScheduledTaskPostgresDao>;
 

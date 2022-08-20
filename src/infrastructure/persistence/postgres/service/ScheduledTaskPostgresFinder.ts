@@ -1,4 +1,3 @@
-import { Injectable } from '@nestjs/common';
 import { Brackets, DataSource, Repository } from 'typeorm';
 
 import { ScheduledTaskDto } from '../../../../core/read/dto/ScheduledTaskDto';
@@ -14,7 +13,6 @@ import {
 } from '../dao/ScheduledTaskPostgresDao';
 import { ScheduledTaskPostgresMapper } from '../mapper/index';
 
-@Injectable()
 export class ScheduledTaskPostgresFinder implements ScheduledTaskFinder {
   private repo: Repository<ScheduledTaskPostgresDao>;
 
